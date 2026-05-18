@@ -108,6 +108,63 @@ grep ExecutablePath /var/crash/*.crash
 | H3 | Falso positivo en `likely_packaged()` para `/var/tmp/` | `fileutils.py:136-158` |
 | T1 | TOCTOU entre `os.access()` y `os.path.realpath()` en `_check_interpreted` | `report.py:631-633` |
 
+---
+
+# Comprehensive Audit — Ubuntu Server 24.04.4 LPE Research
+
+## System
+- **OS:** Ubuntu Server 24.04.4 LTS
+- **Kernel:** 6.8.0-117-generic (build Tue May 5 19:26:24 UTC 2026, custom config)
+- **User:** `rafa` (uid 1000), sudo via password
+- **SSH:** exposed on 0.0.0.0:22, public IP 99.134.0.2, X11Forwarding yes, no firewall
+- **Hardware:** 1 vCPU, 1.3GB RAM, 40GB disk, Hyper-V VM
+
+## Attack Surfaces Investigated
+
+| Surface | Status | Detail |
+|---------|--------|--------|
+| **Apport bug (CWE-345)** | ✅ Confirmed | Metadata spoofing, NOT LPE — see above |
+| **Snap-confine (cap_sys_admin)** | ⚠️ Races found | TOCTOU in `setup_private_tmp` (documented), `/tmp/.snap` mimic (not exploitable without root dirs) — CVE-2026-3888 patched |
+| **Polkit/D-Bus** | ⚠️ Partial | udisks2 `filesystem-mount allow_active=yes` (system devices only), no polkit agent → interactive auth fails |
+| **LXD socket** | ❌ Not accessible | User not in `lxd` group |
+| **algif_aead (Copy Fail)** | ❌ Blacklisted | `/etc/modprobe.d/disable-algif_aead.conf` explicitly blocks it |
+| **BPF** | ❌ Locked | `unprivileged_bpf_disabled=2`, not usable from user_ns |
+| **nf_tables** | ❌ EPERM from user_ns | Kernel checks init_user_ns |
+| **io_uring** | 🔒 No crash found | All 45 opcodes tested, register ops, stress tests — no panics |
+| **userfaultfd** | 🔒 No crash found | Works from user_ns with CAP_SYS_PTRACE, no UAF triggered |
+| **SSH ssh-keysign (SUID)** | ❌ No vuln found | Standard OpenSSH 9.6p1 |
+| **Kernel fuzzing (5 min weighted)** | 🔒 Zero crashes | 4 threads: io_uring + uffd + fs + sockets, all from user_ns |
+
+## Key Kernel Config Differences (vs stock Ubuntu)
+
+| Setting | Custom | Stock | Impact |
+|---------|--------|-------|--------|
+| `CONFIG_DEBUG_FS_ALLOW_ALL` | `y` | `=NONE` | debugfs mountable by any user (but dir is 0700 root) |
+| `CONFIG_SECURITY_APPARMOR_RESTRICT_USERNS` | not set | `y` | User namespaces unrestricted by AppArmor |
+| `CONFIG_KASAN` | not set | `y` on debug | No kernel address sanitizer (easier exploitation) |
+
+## Tools Created
+
+| File | Description |
+|------|-------------|
+| `exploit_harness.c` | 15-test kernel interface battery (all passed) |
+| `stress_race.c` | 8-thread race condition stress test (50k iters, 0 crashes) |
+| `uffd_race_poc.c` | Userfaultfd + io_uring/memfd/madvise race PoC (0 crashes) |
+| `syz_runner.c` | Weighted kernel fuzzer (runs 4 target threads inside user_ns) |
+| `syzkaller/` | Built from source at `/tmp/syzkaller/bin/` |
+
+## syzkaller Setup
+Built from source and ready for VM fuzzing:
+- `/tmp/syzkaller/bin/syz-manager`
+- `/tmp/syzkaller/bin/linux_amd64/syz-execprog`
+- `/tmp/syzkaller/bin/linux_amd64/syz-executor`
+- Kernel source at `/usr/src/linux-source-6.8.0/` (needs KASAN rebuild for effective fuzzing)
+
+## Known Existing CVEs (not new zero-days)
+- **Dirty Frag** (disclosed May 7 2026): Kernel build May 5 predates patches
+- **CVE-2026-31431 (Copy Fail)**: algif_aead module blacklisted as mitigation
+- **CVE-2026-3888 (snap-confine)** : Snapd 2.74.1 patched
+
 ## Referencias
 
 - [CWE-20](https://cwe.mitre.org/data/definitions/20.html)
