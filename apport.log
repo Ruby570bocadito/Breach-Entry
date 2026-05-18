@@ -1,0 +1,35 @@
+INFO: apport (pid 12027) 2026-05-18 13:56:16,548: called for global pid 12026, signal 11, core limit 0, dump mode 1
+ERROR: apport (pid 12027) 2026-05-18 13:56:17,549: gdbus call error: Error: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+
+INFO: apport (pid 12027) 2026-05-18 13:56:17,554: script: /tmp/crash_script.py, interpreted by /usr/bin/python3.12 (command line "python3 /tmp/crash_script.py")
+ERROR: apport (pid 12027) 2026-05-18 13:56:17,554: executable does not belong to a package, ignoring
+INFO: apport (pid 12095) 2026-05-18 13:59:44,885: called for global pid 12094, signal 11, core limit 18446744073709551615, dump mode 1
+ERROR: apport (pid 12095) 2026-05-18 13:59:44,885: ignoring implausibly big core limit, treating as unlimited
+ERROR: apport (pid 12095) 2026-05-18 13:59:45,886: gdbus call error: Error: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+
+INFO: apport (pid 12095) 2026-05-18 13:59:45,887: script: /tmp/poc_apport_override.py, interpreted by /usr/bin/python3.12 (command line "python3 /tmp/poc_apport_override.py /etc/passwd")
+ERROR: apport (pid 12095) 2026-05-18 13:59:45,887: executable does not belong to a package, ignoring
+INFO: apport (pid 12095) 2026-05-18 13:59:45,892: writing core dump to /var/lib/apport/coredump/core._usr_bin_python3_12.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12094.312696 (limit: -1)
+INFO: apport (pid 12222) 2026-05-18 14:07:03,384: called for global pid 12221, signal 11, core limit 18446744073709551615, dump mode 1
+ERROR: apport (pid 12222) 2026-05-18 14:07:03,384: ignoring implausibly big core limit, treating as unlimited
+ERROR: apport (pid 12222) 2026-05-18 14:07:04,385: gdbus call error: Error: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+
+INFO: apport (pid 12222) 2026-05-18 14:07:04,386: script: /var/tmp/poc_crash.py, interpreted by /usr/bin/python3.12 (command line "python3 /var/tmp/poc_crash.py")
+INFO: apport (pid 12222) 2026-05-18 14:07:04,681: wrote report /var/crash/_var_tmp_poc_crash.py.1000.crash
+INFO: apport (pid 12222) 2026-05-18 14:07:04,681: writing core dump to /var/lib/apport/coredump/core._usr_bin_python3_12.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12221.356549 (limit: -1)
+INFO: apport (pid 12222) 2026-05-18 14:07:04,698: writing core dump /var/lib/apport/coredump/core._usr_bin_python3_12.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12221.356549 of size 5537792
+INFO: apport (pid 12613) 2026-05-18 14:24:08,963: called for global pid 12612, signal 11, core limit 18446744073709551615, dump mode 1
+ERROR: apport (pid 12613) 2026-05-18 14:24:08,963: ignoring implausibly big core limit, treating as unlimited
+ERROR: apport (pid 12613) 2026-05-18 14:24:08,963: is_closing_session(): no DBUS_SESSION_BUS_ADDRESS in environment
+INFO: apport (pid 12613) 2026-05-18 14:24:08,964: executable: /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 (command line "/usr/bin/ld.so --preload /tmp/.libexploit.so /usr/bin/true")
+INFO: apport (pid 12613) 2026-05-18 14:24:09,699: wrote report /var/crash/_usr_lib_x86_64-linux-gnu_ld-linux-x86-64.so.2.1000.crash
+INFO: apport (pid 12613) 2026-05-18 14:24:09,700: writing core dump to /var/lib/apport/coredump/core._usr_lib_x86_64-linux-gnu_ld-linux-x86-64_so_2.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12612.459100 (limit: -1)
+INFO: apport (pid 12613) 2026-05-18 14:24:09,701: writing core dump /var/lib/apport/coredump/core._usr_lib_x86_64-linux-gnu_ld-linux-x86-64_so_2.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12612.459100 of size 217088
+INFO: apport (pid 12626) 2026-05-18 14:24:09,852: called for global pid 12625, signal 11, core limit 18446744073709551615, dump mode 1
+ERROR: apport (pid 12626) 2026-05-18 14:24:09,852: ignoring implausibly big core limit, treating as unlimited
+ERROR: apport (pid 12626) 2026-05-18 14:24:10,854: gdbus call error: Error: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.gnome.SessionManager was not provided by any .service files
+
+INFO: apport (pid 12626) 2026-05-18 14:24:10,854: script: /usr/bin/passwd, interpreted by /usr/bin/bash (command line "/usr/bin/bash /usr/bin/passwd")
+INFO: apport (pid 12626) 2026-05-18 14:24:11,459: wrote report /var/crash/_usr_bin_passwd.1000.crash
+INFO: apport (pid 12626) 2026-05-18 14:24:11,459: writing core dump to /var/lib/apport/coredump/core._usr_bin_bash.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12625.459193 (limit: -1)
+INFO: apport (pid 12626) 2026-05-18 14:24:11,460: writing core dump /var/lib/apport/coredump/core._usr_bin_bash.1000.7146f2a2-472f-4533-a3bc-2f276b46f9a8.12625.459193 of size 262144
