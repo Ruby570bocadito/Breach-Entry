@@ -1,6 +1,6 @@
-# CVE Request: Apport Crash Report ExecutablePath Spoofing via _check_interpreted()
+# Security Advisory: Apport ExecutablePath Spoofing via _check_interpreted()
 
-**Estado:** NO PUBLICADO — Reporte de vulnerabilidad para MITRE/Canonical
+**Estado:** NO PUBLICADO — Reporte técnico de vulnerabilidad
 
 ---
 

@@ -2,7 +2,7 @@
 """
 PoC: Apport ExecutablePath Override via _check_interpreted()
 
-Vulnerability: apport/report.py:_check_interpreted() (line 626-633) uses
+Vulnerability: apport/report.py:_check_interpreted() (lines 626-633) uses
 the crashing process's ProcCmdline argv[1] to override ExecutablePath.
 The only validation is os.access(path, R_OK) — no check that the path
 is the actual script, a legitimate binary, or packaged.

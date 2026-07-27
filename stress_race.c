@@ -62,19 +62,22 @@
 
 static volatile int stop_flag = 0;
 static volatile int crash_count = 0;
-static pthread_mutex_t crash_lock = PTHREAD_MUTEX_INITIALIZER;
 
-/* Report crash */
-static void check_crash(int pid)
+/* Safely wait for a child, kill if still running, return 1 if it crashed */
+static int reap_child(pid_t pid, int delay_us)
 {
+    if (delay_us > 0)
+        usleep(delay_us);
     int status;
-    if (waitpid(pid, &status, WNOHANG) > 0) {
-        if (WIFSIGNALED(status)) {
-            pthread_mutex_lock(&crash_lock);
-            crash_count++;
-            pthread_mutex_unlock(&crash_lock);
-        }
+    pid_t ret = waitpid(pid, &status, WNOHANG);
+    if (ret == 0) {
+        kill(pid, SIGKILL);
+        waitpid(pid, &status, 0);
+        ret = 1;
     }
+    if (ret > 0 && WIFSIGNALED(status))
+        return 1;
+    return 0;
 }
 
 /* ============== RACE THREADS ============== */
@@ -123,10 +126,8 @@ static void *thread_uring(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(100);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 100))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;
@@ -186,10 +187,8 @@ static void *thread_uffd(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(100);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 100))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;
@@ -226,10 +225,8 @@ static void *thread_fuse_memfd(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(50);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 50))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;
@@ -273,10 +270,8 @@ static void *thread_nft_alg(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(50);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 50))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;
@@ -317,10 +312,8 @@ static void *thread_mount(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(50);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 50))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;
@@ -363,10 +356,8 @@ static void *thread_seccomp_proc(void *arg)
             _exit(0);
         }
         if (pid > 0) {
-            usleep(50);
-            check_crash(pid);
-            kill(pid, SIGKILL);
-            waitpid(pid, NULL, 0);
+            if (reap_child(pid, 50))
+                __sync_fetch_and_add(&crash_count, 1);
         }
     }
     return NULL;

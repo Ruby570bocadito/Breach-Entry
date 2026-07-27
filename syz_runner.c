@@ -110,7 +110,7 @@ static void *fuzz_uring(void *arg)
             memset(sqe, 0, sizeof(*sqe));
             sqe->opcode = rand() % 45;
             sqe->fd = rand() % 5 - 2;
-            sqe->off = (unsigned long)mmap(0, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+            sqe->off = 0;
             sqe->addr = rand() | ((unsigned long)rand() << 32);
             sqe->len = rand() % 16384;
             sqe->user_data = idx;
@@ -203,11 +203,11 @@ static void *fuzz_mount(void *arg)
         case 3: {
             int fd = open("/proc/self/mem", O_RDWR);
             if (fd >= 0) {
-                unsigned long addr = (unsigned long)mmap(0, 4096, PROT_READ|PROT_WRITE,
-                    MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED, -1, 0);
-                if (addr != MAP_FAILED) {
-                    pwrite(fd, "AAAA", 4, addr);
-                    munmap((void*)addr, 4096);
+                void *m = mmap(0, 4096, PROT_READ|PROT_WRITE,
+                    MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED_NOREPLACE, -1, 0);
+                if (m != MAP_FAILED) {
+                    pwrite(fd, "AAAA", 4, (unsigned long)m);
+                    munmap(m, 4096);
                 }
                 pwrite(fd, "AAAA", 4, 0);
                 close(fd);
