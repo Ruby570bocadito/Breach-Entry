@@ -32,3 +32,8 @@ Thumbs.db
 # === Core dumps ===
 core
 core.*
+pwn_apport
+exploit_harness
+stress_race
+uffd_race_poc
+syz_runner

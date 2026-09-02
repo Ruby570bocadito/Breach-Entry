@@ -89,6 +89,7 @@ static void enter_userns(void)
 static int test_uring_uffd_race(void)
 {
     printf("[*] io_uring + userfaultfd race test\n");
+    atomic_store(&stop, 0); /* reset shared flag for this test */
 
     /* Create UFFD */
     long uffd = syscall(__NR_userfaultfd, 0);
@@ -196,6 +197,7 @@ static void *madvise_thread(void *arg)
 
 static int test_madvise_uffd_race(void)
 {
+    atomic_store(&stop, 0); /* reset shared flag for this test */
     printf("[*] userfaultfd + MADV_DONTNEED race test\n");
 
     long uffd = syscall(__NR_userfaultfd, 0);
@@ -267,6 +269,7 @@ static void *uffd_handler_fd(void *arg)
 
 static int test_memfd_uffd_race(void)
 {
+    atomic_store(&stop, 0); /* reset shared flag for this test */
     printf("[*] userfaultfd + memfd read race test\n");
     long uffd = syscall(__NR_userfaultfd, 0);
     if (uffd < 0) { printf("    userfaultfd not available\n"); return 0; }
